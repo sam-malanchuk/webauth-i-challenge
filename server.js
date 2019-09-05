@@ -1,12 +1,14 @@
 const express = require('express');
 const helmet = require('helmet');
 const bcrypt = require('bcryptjs');
+const cookieParser = require('cookie-parser');
 
 const Users = require('./users-model.js');
 
 const server = express();
 
 server.use(helmet());
+server.use(cookieParser());
 server.use(express.json());
 
 server.post('/api/register', (req, res) => {
@@ -26,7 +28,7 @@ server.post('/api/register', (req, res) => {
 server.post('/api/login', (req, res) => {
   const { username, password } = req.body;
 
-  Users.loginUser({ username }).first()
+  Users.getBy({ username }).first()
     .then(user => {
       if(user && bcrypt.compareSync(password, user.password)) {
         res.cookie('user_id', user.id); // create a cookie with the user ID
@@ -39,5 +41,22 @@ server.post('/api/login', (req, res) => {
       res.status(500).json({ message: 'Server error logging in' });
     })
 });
+
+server.get('/api/users', restricted, (req, res) => {
+  res.status(200).json({ message: 'all good here'});
+});
+
+function restricted(req, res, next) {
+  const { user_id } = req.cookies;
+  console.log('here is the cookie', user_id);
+  
+  Users.getBy({id: user_id}).first()
+    .then(user => {
+      next();
+    })
+    .catch(err => {
+      res.status(404).json({ message: 'not logged in' });
+    })
+}
 
 module.exports = server;

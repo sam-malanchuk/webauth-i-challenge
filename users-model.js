@@ -1,9 +1,13 @@
 const db = require('./data/db-config.js');
 
 module.exports = {
+  getBy,
   registerUser,
-  loginUser,
   getUsers
+}
+
+function getBy(filter) {
+  return db('users').where(filter);  
 }
 
 function registerUser(userData) {
@@ -12,10 +16,6 @@ function registerUser(userData) {
       const id = ids[0];
       return db('users').where({id}).first()
     })
-}
-
-function loginUser(username) {
-  return db('users').where(username);
 }
 
 function getUsers() {
