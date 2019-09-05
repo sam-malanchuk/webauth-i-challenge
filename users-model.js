@@ -14,8 +14,8 @@ function registerUser(userData) {
     })
 }
 
-function loginUser() {
-
+function loginUser(username) {
+  return db('users').where(username);
 }
 
 function getUsers() {
