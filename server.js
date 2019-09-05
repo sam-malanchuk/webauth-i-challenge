@@ -43,19 +43,28 @@ server.post('/api/login', (req, res) => {
 });
 
 server.get('/api/users', restricted, (req, res) => {
-  res.status(200).json({ message: 'all good here'});
+  Users.getUsers()
+    .then(users => {
+      res.status(200).json(users);
+    })
+    .catch(err => {
+      res.status(500).json({ message: 'Error getting users list' });
+    })
 });
 
 function restricted(req, res, next) {
   const { user_id } = req.cookies;
-  console.log('here is the cookie', user_id);
   
   Users.getBy({id: user_id}).first()
     .then(user => {
-      next();
+      if(user) {
+        next();
+      } else {
+        res.status(404).json({ message: 'You shall not pass!' });
+      }
     })
     .catch(err => {
-      res.status(404).json({ message: 'not logged in' });
+      res.status(404).json({ message: 'You shall not pass!' });
     })
 }
 

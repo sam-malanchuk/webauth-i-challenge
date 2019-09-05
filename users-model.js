@@ -19,5 +19,5 @@ function registerUser(userData) {
 }
 
 function getUsers() {
-
+  return db('users');
 }
