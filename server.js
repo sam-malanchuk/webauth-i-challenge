@@ -57,7 +57,7 @@ server.post('/api/login', (req, res) => {
         req.session.user = user.id;
         res.status(200).json({ message: `Logged in. Welcome ${user.username}!` });
       } else {
-        res.status(200).json({ message: 'Invalid Credentials' });
+        res.status(200).json({ message: 'You shall not pass!' });
       }
     })
     .catch(err => {
