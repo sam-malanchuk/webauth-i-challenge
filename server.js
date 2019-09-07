@@ -34,6 +34,7 @@ server.use(helmet());
 server.use(express.json());
 server.use(session(sessionConfig));
 
+// endpoint takes in a username and password and creates a new user in the database
 server.post('/api/register', (req, res) => {
   const userData = req.body;
 
@@ -48,6 +49,7 @@ server.post('/api/register', (req, res) => {
     })
 });
 
+// endpoint takes in a username and password to create a log in session if user credentials exist
 server.post('/api/login', (req, res) => {
   const { username, password } = req.body;
 
@@ -65,6 +67,7 @@ server.post('/api/login', (req, res) => {
     })
 });
 
+// restricted endpoint to get a list of the users
 server.get('/api/users', restricted, (req, res) => {
   Users.getUsers()
     .then(users => {
@@ -75,6 +78,9 @@ server.get('/api/users', restricted, (req, res) => {
     })
 });
 
+// Middleware:
+
+// Checks if the user is logged in to allow/deny access to restricted endpoints
 function restricted(req, res, next) {
   if(req.session.user) {
     const user_id = req.session.user;
